@@ -2,22 +2,22 @@ name: 🚀 Deploy to AWS
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '18'
-  TERRAFORM_VERSION: '1.6.0'
-  AWS_REGION: 'us-east-1'
+  NODE_VERSION: "18"
+  TERRAFORM_VERSION: "1.6.0"
+  AWS_REGION: "us-east-1"
 
 jobs:
   # Job 1: Build and Test
   build-and-test:
     name: 🏗️ Build & Test
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 📦 Install dependencies
         run: npm ci
@@ -48,7 +48,7 @@ jobs:
     name: 🐳 Docker Build
     runs-on: ubuntu-latest
     needs: build-and-test
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -78,7 +78,7 @@ jobs:
     name: 📋 Terraform Plan
     runs-on: ubuntu-latest
     needs: build-and-test
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-and-test, docker-build, terraform-plan]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -173,7 +173,7 @@ jobs:
             --cache-control "public,max-age=31536000,immutable" \
             --exclude "index.html" \
             --exclude "*.html"
-          
+
           aws s3 sync dist/ s3://${{ steps.tf-outputs.outputs.bucket }} \
             --cache-control "public,max-age=0,must-revalidate" \
             --exclude "*" \
