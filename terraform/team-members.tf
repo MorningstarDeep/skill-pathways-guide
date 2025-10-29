@@ -7,8 +7,9 @@ resource "aws_iam_user" "krishna_jalan" {
 
   tags = {
     Name        = "Krishna Jalan"
+    Email       = "krishna.jalan@example.com"  # Update with real email
     Project     = "SkillPathways"
-    Role        = "Developer"
+    Role        = "Administrator"
     Environment = var.environment
   }
 }
@@ -24,8 +25,9 @@ resource "aws_iam_user" "hathim_mohammed" {
 
   tags = {
     Name        = "Hathim Mohammed"
+    Email       = "hathim.mohammed@example.com"  # Update with real email
     Project     = "SkillPathways"
-    Role        = "Developer"
+    Role        = "Administrator"
     Environment = var.environment
   }
 }
@@ -34,64 +36,19 @@ resource "aws_iam_user_login_profile" "hathim_mohammed" {
   user = aws_iam_user.hathim_mohammed.name
 }
 
-# Developer policy - can manage S3, CloudFront, and view other resources
-resource "aws_iam_policy" "developer_access" {
-  name        = "skill-pathways-developer-access"
-  description = "Developer access for Skill Pathways project"
+# Full Administrator Access for team members
+# Grants complete access to all AWS services and resources
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = "S3FullAccess"
-        Effect = "Allow"
-        Action = [
-          "s3:*"
-        ]
-        Resource = [
-          aws_s3_bucket.website.arn,
-          "${aws_s3_bucket.website.arn}/*"
-        ]
-      },
-      {
-        Sid    = "CloudFrontManagement"
-        Effect = "Allow"
-        Action = [
-          "cloudfront:Get*",
-          "cloudfront:List*",
-          "cloudfront:CreateInvalidation"
-        ]
-        Resource = aws_cloudfront_distribution.website.arn
-      },
-      {
-        Sid    = "ReadOnlyAccess"
-        Effect = "Allow"
-        Action = [
-          "cloudfront:Describe*",
-          "cloudfront:Get*",
-          "cloudfront:List*",
-          "s3:List*",
-          "s3:Get*",
-          "iam:GetUser",
-          "iam:GetUserPolicy",
-          "iam:ListUserPolicies"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-
-# Attach developer policy to Krishna
-resource "aws_iam_user_policy_attachment" "krishna_developer" {
+# Attach AdministratorAccess policy to Krishna
+resource "aws_iam_user_policy_attachment" "krishna_admin" {
   user       = aws_iam_user.krishna_jalan.name
-  policy_arn = aws_iam_policy.developer_access.arn
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-# Attach developer policy to Hathim
-resource "aws_iam_user_policy_attachment" "hathim_developer" {
+# Attach AdministratorAccess policy to Hathim
+resource "aws_iam_user_policy_attachment" "hathim_admin" {
   user       = aws_iam_user.hathim_mohammed.name
-  policy_arn = aws_iam_policy.developer_access.arn
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
 # Outputs for team member credentials
