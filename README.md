@@ -1,4 +1,4 @@
-```
+
 # 🧭 Developer Roadmaps – DevOps Full Stack Project
 
 A full-stack web application that provides structured roadmaps for developers to learn various technical skills.  
@@ -66,7 +66,6 @@ The cloud deployment uses:
 
 ## 📂 Project Structure
 
-```
 
 root/
 │
@@ -77,7 +76,6 @@ root/
 ├── docker/                  # Dockerfiles
 └── README.md
 
-````
 
 ---
 
